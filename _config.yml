@@ -27,6 +27,9 @@ url: "jflmng.github.io" # the base hostname & protocol for your site, e.g. http:
 #twitter_username: jekyllrb
 github_username:  jflmng
 
+# Google analytics tag
+google_analytics: G-ZYS6HM1QMD
+
 # Build settings
 theme: minima
 plugins:
