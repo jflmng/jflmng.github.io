@@ -26,7 +26,7 @@ Check out the [Jekyll docs][jekyll-docs] for more info on how to get the most ou
 
 Test of scholar includes:
 
-{% include publications link=true %}
+{% include publications limit=20 link=true %}
 
 
 [jekyll-docs]: https://jekyllrb.com/docs/home
