@@ -31,7 +31,8 @@ github_username:  jflmng
 google_analytics: G-ZYS6HM1QMD
 
 # Pagination
-paginate: 5
+paginate: 5 # amount of posts to show
+paginate_path: /page:num/
 
 # Build settings
 remote_theme: jekyll/minima
