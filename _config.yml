@@ -34,13 +34,15 @@ google_analytics: G-ZYS6HM1QMD
 paginate: 5
 
 # Build settings
-theme: minima
+remote_theme: jekyll/minima
+
 plugins:
+  - jekyll-remote-theme
   - jekyll-feed
 
-# Minima skin to use (removed, not working)
-# minima:
-#   skin: solarized
+# Minima skin to use
+minima:
+  skin: solarized
 
 # Exclude from processing.
 # The following items will not be processed, by default.
