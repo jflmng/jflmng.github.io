@@ -30,6 +30,9 @@ github_username:  jflmng
 # Google analytics tag
 google_analytics: G-ZYS6HM1QMD
 
+# Pagination
+paginate: 5
+
 # Build settings
 theme: minima
 plugins:
