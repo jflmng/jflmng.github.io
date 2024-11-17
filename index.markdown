@@ -18,5 +18,3 @@ layout: home
     {{ post.content }}
   </article>
 {% endfor %}
-Share
-Improve this answer
