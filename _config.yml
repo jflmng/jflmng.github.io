@@ -40,6 +40,8 @@ remote_theme: jekyll/minima
 plugins:
   - jekyll-remote-theme
   - jekyll-feed
+  - jekyll-include-cache
+  
 
 # Minima skin to use
 minima:
