@@ -12,3 +12,6 @@ April 2024 IMechE mini symposium talk:
 
 November 2024 Electrical and Robotics Community talk:
 [pptx](/download/NIA_updated_JF.pptx) [pdf](/download/NIA_updated_JF.pdf)
+
+December 2024 CDC Presentation on LPV MPC
+[pdf](/download/Robust_tube_MPC_for_LPV_A__updated_ (1).pdf)
