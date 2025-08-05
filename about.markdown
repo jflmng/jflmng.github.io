@@ -10,5 +10,5 @@ James obtained the MEng and DPhil degrees in 2012 and 2016 respectively from the
 
 Qualifications
 
-2012—2016 University of Oxford, Department of Engineering Science, Doctor of Philosophy in Engineering Science
+2012 — 2016 University of Oxford, Department of Engineering Science, Doctor of Philosophy in Engineering Science
 2008 – 2012 University of Oxford, St Edmund Hall, Master of Engineering Science
