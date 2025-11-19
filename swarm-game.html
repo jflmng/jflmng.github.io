@@ -2,9 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Swarm Commander: High-Impact Visuals</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Swarm Commander: Mobile</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #080808; font-family: 'Segoe UI', monospace; }
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background: #080808; 
+            font-family: 'Segoe UI', monospace; 
+            /* Disable touch gestures like pull-to-refresh */
+            touch-action: none; 
+            -webkit-user-select: none;
+            user-select: none;
+        }
         canvas { display: block; }
         
         #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
@@ -27,8 +37,8 @@
 
         /* Boss HUD */
         #boss-hud {
-            position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
-            width: 50%; max-width: 600px; display: none;
+            position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
+            width: 60%; max-width: 600px; display: none;
         }
         .boss-bar-frame { width: 100%; height: 16px; background: #111; border: 2px solid #555; margin-top: 4px; }
         #boss-health { width: 100%; height: 100%; background: #d32f2f; transition: width 0.05s; }
@@ -37,10 +47,10 @@
         /* Overlay */
         #overlay {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            text-align: center; display: none;
+            text-align: center; display: none; width: 100%;
         }
-        h1 { font-size: 4rem; margin: 0; color: white; letter-spacing: -2px; text-shadow: 0 0 20px rgba(255,255,255,0.5); }
-        p { color: #aaa; font-size: 1.2rem; }
+        h1 { font-size: 3rem; margin: 0; color: white; letter-spacing: -2px; text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+        p { color: #aaa; font-size: 1.1rem; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -51,17 +61,17 @@
     <div id="stats">
         <div class="row"><span>UNITS</span> <span id="count" class="val">0</span></div>
         <div class="row"><span>WAVE</span> <span id="wave" class="val">1</span></div>
-        <div class="row"><span>HAZARD %</span> <span id="haz-val" class="val">0.1%</span></div>
+        <div class="row"><span>HAZARD</span> <span id="haz-val" class="val">0.1%</span></div>
     </div>
 
     <div id="boss-hud">
-        <div id="boss-label">⚠ CAPITAL SHIP DETECTED ⚠</div>
+        <div id="boss-label">⚠ CAPITAL SHIP ⚠</div>
         <div class="boss-bar-frame"><div id="boss-health"></div></div>
     </div>
 
     <div id="overlay">
         <h1>SIGNAL LOST</h1>
-        <p>REFRESH TO REBOOT SYSTEM</p>
+        <p>TAP TO REBOOT SYSTEM</p>
     </div>
 </div>
 
@@ -83,7 +93,8 @@
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     
-    let width, height;
+    // State
+    let width, height, dpr;
     let mouse = { x: 0, y: 0, down: false };
     
     let game = {
@@ -105,6 +116,23 @@
 
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     const rand = (min, max) => Math.random() * (max - min) + min;
+
+    // --- Resolution Handler ---
+    function resize() {
+        width = window.innerWidth; 
+        height = window.innerHeight;
+        dpr = window.devicePixelRatio || 1;
+        
+        // Set actual canvas size to pixels * dpi
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        
+        // Normalize coordinate system
+        ctx.scale(dpr, dpr);
+        
+        // If first load, center mouse
+        if(mouse.x === 0) { mouse.x = width/2; mouse.y = height/2; }
+    }
 
     // --- FX ---
     class Particle {
@@ -184,7 +212,7 @@
             if (this.cooldown <= 0 && mouse.down) this.fire();
         }
         fire() {
-            const engageDist = width * 0.6; 
+            const engageDist = width * 0.65; 
             let target = null; let minD = engageDist;
             if (boss) {
                 let d = dist(this.pos, boss);
@@ -232,7 +260,7 @@
             } else if (type === 'interceptor') {
                 this.hp = 9999; this.invulnerable = true;
                 this.speed = CONFIG.scrollSpeed * 1.8; this.radius = 14; 
-                this.color = '#ff9800'; // Bright orange
+                this.color = '#ff9800'; 
             }
         }
         update() {
@@ -249,17 +277,14 @@
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
                 ctx.fillStyle = this.color; ctx.fill();
             } else {
-                // Diamond shape for interceptors
                 ctx.moveTo(this.x+15, this.y); ctx.lineTo(this.x, this.y-15); 
                 ctx.lineTo(this.x-15, this.y); ctx.lineTo(this.x, this.y+15);
                 ctx.fillStyle = this.color; ctx.fill();
-                // --- INTERCEPTOR GLOW ---
                 ctx.shadowBlur = 15; 
-                ctx.shadowColor = '#ffc107'; // Orange glow
-                ctx.strokeStyle = '#ffa726'; ctx.lineWidth = 2; ctx.stroke(); // Slightly brighter orange border
-                ctx.shadowBlur = 0; // Reset shadow
+                ctx.shadowColor = '#ffc107'; 
+                ctx.strokeStyle = '#ffa726'; ctx.lineWidth = 2; ctx.stroke(); 
+                ctx.shadowBlur = 0; 
             }
-            
             if (!this.invulnerable && this.hp < this.maxHp) {
                 ctx.fillStyle = 'white'; ctx.fillRect(this.x-12, this.y - this.radius - 8, 24 * (this.hp/this.maxHp), 3);
             }
@@ -271,7 +296,6 @@
             this.x = width + 250;
             this.y = height / 2;
             this.radius = 75;
-            
             this.maxHp = 5000 + (Math.pow(game.wave, 1.2) * 3000);
             this.hp = this.maxHp;
             this.timer = 0;
@@ -285,7 +309,6 @@
             this.y = (height/2) + Math.sin(this.timer * 0.015) * 220;
             
             let interval = 65;
-            
             let cycle = this.timer % interval;
             this.charge = (cycle > interval - 20) ? (cycle - (interval-20))/20 : 0;
 
@@ -302,7 +325,7 @@
             const spreadAngle = 0.15;
 
             switch (this.currentPattern) {
-                case 0: // Spread Shot
+                case 0: // Spread
                     for(let i=-2; i<=2; i++) {
                         eBullets.push({
                             x: this.x, y: this.y,
@@ -312,7 +335,7 @@
                         });
                     }
                     break;
-                case 1: // Targeted Burst
+                case 1: // Burst
                     for(let i=0; i<5; i++) { 
                         eBullets.push({
                             x: this.x, y: this.y,
@@ -322,7 +345,7 @@
                         });
                     }
                     break;
-                case 2: // Spiral Barrage
+                case 2: // Spiral
                     let spiralAngle = (this.timer * 0.1) % (Math.PI * 2);
                     for(let i=0; i<4; i++) { 
                         eBullets.push({
@@ -334,28 +357,22 @@
                     }
                     break;
             }
-            
-            this.x += 5; // Recoil visual
+            this.x += 5; 
         }
         draw() {
             ctx.save();
-            
             ctx.shadowBlur = 20; ctx.shadowColor = '#b71c1c';
             ctx.fillStyle = '#212121'; ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2); ctx.fill();
-            
             ctx.shadowColor = 'white';
             ctx.shadowBlur = this.charge * 50;
             ctx.fillStyle = `rgba(255, ${23 + this.charge*230}, ${68 + this.charge*180}, 1)`; 
-            
             ctx.beginPath(); ctx.arc(this.x, this.y, this.radius * 0.4, 0, Math.PI*2); ctx.fill();
-            
             ctx.strokeStyle = '#d32f2f'; ctx.lineWidth = 6; ctx.stroke();
             ctx.restore();
         }
     }
 
     // --- Systems ---
-
     function spawnSystem() {
         if (game.state === 'BOSS') return;
         
@@ -366,7 +383,6 @@
         let interceptorBase = 0.0005 + ((game.wave - 1) * 0.002);
         let interceptorChance = Math.min(interceptorBase, 0.008);
         game.hazardRate = (interceptorChance * 100).toFixed(2);
-
         if (Math.random() < interceptorChance) enemies.push(new Enemy('interceptor'));
 
         if (Math.random() < 0.02) powerups.push({ x: width+50, y: rand(50, height-50), radius: 8, active: true });
@@ -387,7 +403,7 @@
         bullets.forEach(b => {
             if(boss && dist(b, boss) < boss.radius) {
                 boss.hp -= CONFIG.damage; b.life = 0; 
-                explode(b.x, b.y, '#ff8a80', 5, 8, 4, 0.03); // More distinct boss hit effect
+                explode(b.x, b.y, '#ff8a80', 5, 8, 4, 0.03);
             }
             enemies.forEach(e => {
                 let hitR = e.invulnerable ? 15 : 5;
@@ -397,7 +413,7 @@
                         e.hp -= CONFIG.damage; b.life = 0;
                         if(e.hp <= 0) { 
                             e.marked = true; 
-                            explode(e.x, e.y, e.color, 15, 6, 4, 0.03); // Larger standard enemy explosions
+                            explode(e.x, e.y, e.color, 15, 6, 4, 0.03);
                         }
                     }
                 }
@@ -412,9 +428,8 @@
                 let r = t.radius || 5;
                 if(dist(d.pos, t) < d.radius + r) {
                     drones.splice(idx, 1);
-                    // --- MASSIVE DRONE EXPLOSION ---
-                    explode(d.pos.x, d.pos.y, '#00d2ff', 30, 8, 5, 0.02); // Many more, larger, longer-lived particles
-                    game.shake = 8; // Slightly more shake for drone loss
+                    explode(d.pos.x, d.pos.y, '#00d2ff', 30, 8, 5, 0.02); 
+                    game.shake = 8; 
                     if(t.vx) t.x = -1000; 
                 }
             });
@@ -445,9 +460,7 @@
     }
 
     function loop() {
-        if(width !== window.innerWidth) { 
-            width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; 
-        }
+        if(window.innerWidth !== width) resize(); // Dynamic resizing check
 
         let sx = 0, sy = 0;
         if(game.shake > 0) {
@@ -512,11 +525,42 @@
         requestAnimationFrame(loop);
     }
 
-    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    // --- INPUT HANDLING ---
+    // Mouse
+    window.addEventListener('mousemove', e => {
+        mouse.x = e.clientX; mouse.y = e.clientY;
+    });
     window.addEventListener('mousedown', () => mouse.down = true);
     window.addEventListener('mouseup', () => mouse.down = false);
 
-    width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height;
+    // Touch (Mobile)
+    // Maps touch interaction to "Mouse Down + Move"
+    canvas.addEventListener('touchstart', e => {
+        e.preventDefault();
+        mouse.down = true;
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+        // Restart if dead
+        if(drones.length === 0) location.reload();
+    }, {passive: false});
+
+    canvas.addEventListener('touchmove', e => {
+        e.preventDefault();
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+    }, {passive: false});
+
+    canvas.addEventListener('touchend', e => {
+        e.preventDefault();
+        mouse.down = false;
+    }, {passive: false});
+    
+    // Restart click for desktop
+    document.getElementById('overlay').addEventListener('click', () => location.reload());
+
+    resize();
+    window.addEventListener('resize', resize);
+    
     for(let i=0; i<CONFIG.droneCount; i++) drones.push(new Drone(width/2, height/2));
     loop();
 
