@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Swarm Commander: Mobile</title>
+    <title>Swarm Commander: Universal</title>
     <style>
         body { 
             margin: 0; 
             overflow: hidden; 
             background: #080808; 
             font-family: 'Segoe UI', monospace; 
-            /* Disable touch gestures like pull-to-refresh */
-            touch-action: none; 
+            touch-action: none; /* Disables browser zooming/scrolling */
             -webkit-user-select: none;
             user-select: none;
         }
-        canvas { display: block; }
+        canvas { 
+            display: block; 
+            width: 100%; 
+            height: 100%;
+        }
         
         #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
 
@@ -27,6 +30,8 @@
             border-left: 3px solid #00d2ff;
             color: #fff; font-size: 0.85rem;
             box-shadow: 0 0 15px rgba(0, 210, 255, 0.15);
+            /* Ensure HUD doesn't get tiny on mobile */
+            transform-origin: top left;
         }
         .row { display: flex; justify-content: space-between; margin-bottom: 4px; min-width: 140px; color: #889; }
         .val { color: #fff; font-weight: bold; }
@@ -51,6 +56,13 @@
         }
         h1 { font-size: 3rem; margin: 0; color: white; letter-spacing: -2px; text-shadow: 0 0 20px rgba(255,255,255,0.5); }
         p { color: #aaa; font-size: 1.1rem; margin-top: 10px; }
+
+        /* Mobile-Specific Adjustments */
+        @media (max-width: 600px) {
+            #stats { transform: scale(0.8); top: 10px; left: 10px; }
+            #boss-hud { width: 80%; top: 50px; }
+            h1 { font-size: 2rem; }
+        }
     </style>
 </head>
 <body>
@@ -88,13 +100,14 @@
         damage: 8,
         bulletSpeed: 16,
         bossInterval: 14000, 
+        minGameWidth: 1000, // Force game to look at least this wide
     };
 
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     
     // State
-    let width, height, dpr;
+    let width, height, scaleFactor;
     let mouse = { x: 0, y: 0, down: false };
     
     let game = {
@@ -117,20 +130,32 @@
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     const rand = (min, max) => Math.random() * (max - min) + min;
 
-    // --- Resolution Handler ---
+    // --- SCALING LOGIC ---
     function resize() {
-        width = window.innerWidth; 
-        height = window.innerHeight;
-        dpr = window.devicePixelRatio || 1;
-        
-        // Set actual canvas size to pixels * dpi
-        canvas.width = width * dpr;
-        canvas.height = height * dpr;
-        
-        // Normalize coordinate system
-        ctx.scale(dpr, dpr);
-        
-        // If first load, center mouse
+        // Determine the logical size of the game world
+        // If screen is narrow (mobile), force width to CONFIG.minGameWidth
+        // If screen is wide (desktop), use actual window width
+        let realWidth = window.innerWidth;
+        let realHeight = window.innerHeight;
+        let aspect = realWidth / realHeight;
+
+        if (realWidth < CONFIG.minGameWidth) {
+            width = CONFIG.minGameWidth;
+            height = width / aspect;
+        } else {
+            width = realWidth;
+            height = realHeight;
+        }
+
+        // Set internal canvas resolution
+        canvas.width = width;
+        canvas.height = height;
+
+        // Calculate how much we need to scale INPUT coordinates
+        // to match the game world coordinates
+        scaleFactor = width / realWidth;
+
+        // Center mouse on load
         if(mouse.x === 0) { mouse.x = width/2; mouse.y = height/2; }
     }
 
@@ -460,7 +485,7 @@
     }
 
     function loop() {
-        if(window.innerWidth !== width) resize(); // Dynamic resizing check
+        if(window.innerWidth !== (canvas.clientWidth)) resize(); 
 
         let sx = 0, sy = 0;
         if(game.shake > 0) {
@@ -528,26 +553,25 @@
     // --- INPUT HANDLING ---
     // Mouse
     window.addEventListener('mousemove', e => {
-        mouse.x = e.clientX; mouse.y = e.clientY;
+        mouse.x = e.clientX * scaleFactor; 
+        mouse.y = e.clientY * scaleFactor;
     });
     window.addEventListener('mousedown', () => mouse.down = true);
     window.addEventListener('mouseup', () => mouse.down = false);
 
-    // Touch (Mobile)
-    // Maps touch interaction to "Mouse Down + Move"
+    // Touch
     canvas.addEventListener('touchstart', e => {
         e.preventDefault();
         mouse.down = true;
-        mouse.x = e.touches[0].clientX;
-        mouse.y = e.touches[0].clientY;
-        // Restart if dead
+        mouse.x = e.touches[0].clientX * scaleFactor;
+        mouse.y = e.touches[0].clientY * scaleFactor;
         if(drones.length === 0) location.reload();
     }, {passive: false});
 
     canvas.addEventListener('touchmove', e => {
         e.preventDefault();
-        mouse.x = e.touches[0].clientX;
-        mouse.y = e.touches[0].clientY;
+        mouse.x = e.touches[0].clientX * scaleFactor;
+        mouse.y = e.touches[0].clientY * scaleFactor;
     }, {passive: false});
 
     canvas.addEventListener('touchend', e => {
@@ -555,7 +579,6 @@
         mouse.down = false;
     }, {passive: false});
     
-    // Restart click for desktop
     document.getElementById('overlay').addEventListener('click', () => location.reload());
 
     resize();
