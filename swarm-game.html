@@ -3,44 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Swarm Commander: Universal</title>
+    <title>Swarm Commander: Gold</title>
     <style>
         body { 
-            margin: 0; 
-            overflow: hidden; 
-            background: #080808; 
-            font-family: 'Segoe UI', monospace; 
-            touch-action: none; /* Disables browser zooming/scrolling */
-            -webkit-user-select: none;
-            user-select: none;
+            margin: 0; overflow: hidden; background: #080808; 
+            font-family: 'Segoe UI', 'Courier New', monospace; 
+            touch-action: none; -webkit-user-select: none; user-select: none;
         }
-        canvas { 
-            display: block; 
-            width: 100%; 
-            height: 100%;
-        }
+        canvas { display: block; width: 100%; height: 100%; }
         
         #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
 
-        /* HUD */
+        /* HUD Elements */
         #stats {
             position: absolute; top: 20px; left: 20px; 
             background: rgba(5, 5, 10, 0.85); 
             padding: 12px 18px; border-radius: 4px; 
-            border-left: 3px solid #00d2ff;
-            color: #fff; font-size: 0.85rem;
+            border-left: 3px solid #00d2ff; color: #fff; font-size: 0.85rem;
             box-shadow: 0 0 15px rgba(0, 210, 255, 0.15);
-            /* Ensure HUD doesn't get tiny on mobile */
             transform-origin: top left;
+            transition: opacity 0.5s;
         }
         .row { display: flex; justify-content: space-between; margin-bottom: 4px; min-width: 140px; color: #889; }
         .val { color: #fff; font-weight: bold; }
 
-        /* Progress Bar */
         #progress-container { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #222; }
         #progress-fill { height: 100%; background: #00d2ff; width: 0%; box-shadow: 0 0 15px #00d2ff; }
 
-        /* Boss HUD */
         #boss-hud {
             position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
             width: 60%; max-width: 600px; display: none;
@@ -49,19 +38,46 @@
         #boss-health { width: 100%; height: 100%; background: #d32f2f; transition: width 0.05s; }
         #boss-label { text-align: center; color: #ef5350; font-weight: 800; letter-spacing: 3px; font-size: 0.8rem; text-shadow: 0 0 5px #b71c1c; }
 
-        /* Overlay */
-        #overlay {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            text-align: center; display: none; width: 100%;
+        /* SCREENS (Start & Game Over) */
+        .screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 5, 10, 0.9);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            pointer-events: auto; /* Allow clicking */
+            z-index: 10;
         }
-        h1 { font-size: 3rem; margin: 0; color: white; letter-spacing: -2px; text-shadow: 0 0 20px rgba(255,255,255,0.5); }
-        p { color: #aaa; font-size: 1.1rem; margin-top: 10px; }
+        
+        h1 { 
+            font-size: 3.5rem; margin: 0 0 20px 0; color: white; letter-spacing: -2px; 
+            text-shadow: 0 0 30px rgba(0, 210, 255, 0.6); 
+            text-align: center; line-height: 1;
+        }
+        
+        .instructions {
+            color: #aaa; font-size: 1.1rem; max-width: 500px; text-align: center; line-height: 1.6; margin-bottom: 40px;
+        }
+        
+        .key-item { display: inline-block; margin: 0 10px; }
+        .key-highlight { color: #00d2ff; font-weight: bold; }
+        .danger { color: #ff9800; font-weight: bold; }
+        
+        button {
+            background: transparent; border: 2px solid #00d2ff; color: #00d2ff;
+            padding: 15px 40px; font-size: 1.2rem; font-family: inherit; font-weight: bold;
+            cursor: pointer; letter-spacing: 2px; transition: all 0.2s;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+        }
+        button:hover { background: #00d2ff; color: #000; box-shadow: 0 0 30px rgba(0, 210, 255, 0.6); }
+        
+        #game-over-screen { display: none; }
 
-        /* Mobile-Specific Adjustments */
+        /* Mobile Adjustments */
         @media (max-width: 600px) {
             #stats { transform: scale(0.8); top: 10px; left: 10px; }
-            #boss-hud { width: 80%; top: 50px; }
-            h1 { font-size: 2rem; }
+            h1 { font-size: 2.5rem; }
+            .instructions { font-size: 0.9rem; width: 90%; }
+            button { padding: 12px 30px; font-size: 1rem; }
         }
     </style>
 </head>
@@ -81,9 +97,25 @@
         <div class="boss-bar-frame"><div id="boss-health"></div></div>
     </div>
 
-    <div id="overlay">
-        <h1>SIGNAL LOST</h1>
-        <p>TAP TO REBOOT SYSTEM</p>
+    <div id="start-screen" class="screen">
+        <h1>SWARM<br>COMMANDER</h1>
+        <div class="instructions">
+            <div class="key-item"><span class="key-highlight">DRAG</span> to Move & Fire</div>
+            <br><br>
+            Collect <span style="color:#00e676">Green Orbs</span> to grow.<br>
+            Destroy <span style="color:#ff1744">Red Enemies</span>.<br>
+            Avoid <span class="danger">Orange Interceptors</span>.
+        </div>
+        <button id="btn-start">INITIALIZE SYSTEM</button>
+    </div>
+
+    <div id="game-over-screen" class="screen">
+        <h1 style="color: #ff1744; text-shadow: 0 0 30px rgba(255, 23, 68, 0.6);">SIGNAL LOST</h1>
+        <div class="instructions">
+            The swarm has been neutralized.<br>
+            Sector <span id="final-wave" class="key-highlight">1</span> reached.
+        </div>
+        <button id="btn-restart">REBOOT SYSTEM</button>
     </div>
 </div>
 
@@ -100,7 +132,7 @@
         damage: 8,
         bulletSpeed: 16,
         bossInterval: 14000, 
-        minGameWidth: 1000, // Force game to look at least this wide
+        minGameWidth: 1000
     };
 
     const canvas = document.getElementById('gameCanvas');
@@ -114,7 +146,7 @@
         dist: 0,
         wave: 1,
         difficulty: 1.0,
-        state: 'SCROLLING',
+        state: 'START', // START, SCROLLING, BOSS, GAMEOVER
         shake: 0,
         hazardRate: 0 
     };
@@ -130,11 +162,8 @@
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     const rand = (min, max) => Math.random() * (max - min) + min;
 
-    // --- SCALING LOGIC ---
+    // --- SCALING ---
     function resize() {
-        // Determine the logical size of the game world
-        // If screen is narrow (mobile), force width to CONFIG.minGameWidth
-        // If screen is wide (desktop), use actual window width
         let realWidth = window.innerWidth;
         let realHeight = window.innerHeight;
         let aspect = realWidth / realHeight;
@@ -147,15 +176,10 @@
             height = realHeight;
         }
 
-        // Set internal canvas resolution
         canvas.width = width;
         canvas.height = height;
-
-        // Calculate how much we need to scale INPUT coordinates
-        // to match the game world coordinates
         scaleFactor = width / realWidth;
 
-        // Center mouse on load
         if(mouse.x === 0) { mouse.x = width/2; mouse.y = height/2; }
     }
 
@@ -173,7 +197,9 @@
             this.lifeDecay = lifeDecay;
         }
         update() {
-            this.x += this.vx - CONFIG.scrollSpeed; 
+            // Only scroll particles if game is scrolling
+            let scroll = (game.state === 'SCROLLING' || game.state === 'BOSS') ? CONFIG.scrollSpeed : 0;
+            this.x += this.vx - scroll; 
             this.y += this.vy;
             this.life -= this.lifeDecay;
         }
@@ -234,7 +260,8 @@
             this.pos.x += this.vel.x; this.pos.y += this.vel.y;
             this.acc.x = 0; this.acc.y = 0;
             this.cooldown--;
-            if (this.cooldown <= 0 && mouse.down) this.fire();
+            // Only fire if game is active
+            if (game.state !== 'START' && game.state !== 'GAMEOVER' && this.cooldown <= 0 && mouse.down) this.fire();
         }
         fire() {
             const engageDist = width * 0.65; 
@@ -305,8 +332,7 @@
                 ctx.moveTo(this.x+15, this.y); ctx.lineTo(this.x, this.y-15); 
                 ctx.lineTo(this.x-15, this.y); ctx.lineTo(this.x, this.y+15);
                 ctx.fillStyle = this.color; ctx.fill();
-                ctx.shadowBlur = 15; 
-                ctx.shadowColor = '#ffc107'; 
+                ctx.shadowBlur = 15; ctx.shadowColor = '#ffc107'; 
                 ctx.strokeStyle = '#ffa726'; ctx.lineWidth = 2; ctx.stroke(); 
                 ctx.shadowBlur = 0; 
             }
@@ -399,7 +425,7 @@
 
     // --- Systems ---
     function spawnSystem() {
-        if (game.state === 'BOSS') return;
+        if (game.state !== 'SCROLLING') return;
         
         let stress = Math.min(drones.length / 10, 2); 
         let stdChance = 0.015 * game.difficulty * stress;
@@ -422,6 +448,31 @@
         enemies.forEach(e => explode(e.x, e.y, e.color));
         enemies = [];
         boss = new Boss();
+    }
+
+    function gameOver() {
+        game.state = 'GAMEOVER';
+        document.getElementById('final-wave').innerText = game.wave;
+        document.getElementById('game-over-screen').style.display = 'flex';
+    }
+
+    function resetGame() {
+        game.wave = 1;
+        game.difficulty = 1.0;
+        game.dist = 0;
+        game.state = 'SCROLLING';
+        drones = [];
+        enemies = [];
+        bullets = [];
+        eBullets = [];
+        powerups = [];
+        particles = [];
+        boss = null;
+        document.getElementById('boss-hud').style.display = 'none';
+        document.getElementById('progress-fill').style.width = '0%';
+        
+        // Initial Swarm
+        for(let i=0; i<CONFIG.droneCount; i++) drones.push(new Drone(width/2, height/2));
     }
 
     function checkCollisions() {
@@ -482,6 +533,10 @@
             document.getElementById('boss-hud').style.display = 'none';
             for(let i=0; i<6; i++) drones.push(new Drone(width/2, height/2));
         }
+
+        if (drones.length === 0 && game.state !== 'GAMEOVER' && game.state !== 'START') {
+            gameOver();
+        }
     }
 
     function loop() {
@@ -497,6 +552,7 @@
         ctx.translate(sx, sy);
         ctx.fillStyle = '#080808'; ctx.fillRect(-10, -10, width+20, height+20);
 
+        // Update Game State
         if(game.state === 'SCROLLING') {
             game.dist += CONFIG.scrollSpeed;
             spawnSystem();
@@ -504,86 +560,85 @@
             document.getElementById('progress-fill').style.width = pct + '%';
         }
 
+        // Grid
         ctx.strokeStyle = 'rgba(30, 40, 50, 0.15)'; ctx.lineWidth = 1;
         let off = (Date.now() * -0.06) % 80;
         for(let x=off; x<width; x+=80) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,height); ctx.stroke(); }
 
+        // Entities
         particles.forEach(p => { p.update(); p.draw(); });
-        powerups.forEach(p => { 
-            p.x -= CONFIG.scrollSpeed;
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2); 
-            ctx.fillStyle = '#00e676'; ctx.fill();
-            ctx.shadowBlur = 10; ctx.shadowColor = '#00e676'; ctx.stroke(); ctx.shadowBlur = 0;
-        });
+        
+        if (game.state !== 'START') {
+            powerups.forEach(p => { 
+                p.x -= CONFIG.scrollSpeed;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2); 
+                ctx.fillStyle = '#00e676'; ctx.fill();
+                ctx.shadowBlur = 10; ctx.shadowColor = '#00e676'; ctx.stroke(); ctx.shadowBlur = 0;
+            });
 
-        enemies.forEach(e => { e.update(); e.draw(); });
-        if(boss) { boss.update(); boss.draw(); }
+            enemies.forEach(e => { e.update(); e.draw(); });
+            if(boss) { boss.update(); boss.draw(); }
 
-        ctx.fillStyle = '#ff1744';
-        eBullets.forEach(b => {
-            b.x += b.vx; b.y += b.vy;
-            ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI*2); ctx.fill();
-        });
+            ctx.fillStyle = '#ff1744';
+            eBullets.forEach(b => {
+                b.x += b.vx; b.y += b.vy;
+                ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI*2); ctx.fill();
+            });
 
-        ctx.strokeStyle = '#00ffff'; ctx.lineWidth = 3; ctx.shadowBlur = 10; ctx.shadowColor = '#00ffff';
-        bullets.forEach(b => {
-            b.x += b.vx + CONFIG.scrollSpeed*0.5; b.y += b.vy;
-            b.life--;
-            ctx.globalAlpha = (b.life < 10) ? b.life / 10 : 1.0;
-            ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(b.x - b.vx * 1.5, b.y - b.vy * 1.5); ctx.stroke();
-        });
-        ctx.globalAlpha = 1.0; ctx.shadowBlur = 0; ctx.lineWidth = 1;
+            ctx.strokeStyle = '#00ffff'; ctx.lineWidth = 3; ctx.shadowBlur = 10; ctx.shadowColor = '#00ffff';
+            bullets.forEach(b => {
+                b.x += b.vx + CONFIG.scrollSpeed*0.5; b.y += b.vy;
+                b.life--;
+                ctx.globalAlpha = (b.life < 10) ? b.life / 10 : 1.0;
+                ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(b.x - b.vx * 1.5, b.y - b.vy * 1.5); ctx.stroke();
+            });
+            ctx.globalAlpha = 1.0; ctx.shadowBlur = 0; ctx.lineWidth = 1;
+
+            checkCollisions();
+        }
 
         drones.forEach(d => { d.update(drones); d.draw(); });
-        checkCollisions();
         ctx.restore();
 
+        // HUD
         document.getElementById('count').innerText = drones.length;
         document.getElementById('wave').innerText = game.wave;
         document.getElementById('haz-val').innerText = game.hazardRate + '%';
         if(boss) document.getElementById('boss-health').style.width = (boss.hp/boss.maxHp*100) + '%';
 
-        if(drones.length === 0) {
-            document.getElementById('overlay').style.display = 'block';
-            return;
-        }
         requestAnimationFrame(loop);
     }
 
-    // --- INPUT HANDLING ---
-    // Mouse
-    window.addEventListener('mousemove', e => {
-        mouse.x = e.clientX * scaleFactor; 
-        mouse.y = e.clientY * scaleFactor;
+    // --- EVENTS ---
+    document.getElementById('btn-start').addEventListener('click', () => {
+        document.getElementById('start-screen').style.display = 'none';
+        resetGame();
     });
+    
+    document.getElementById('btn-restart').addEventListener('click', () => {
+        document.getElementById('game-over-screen').style.display = 'none';
+        resetGame();
+    });
+
+    // Input
+    window.addEventListener('mousemove', e => { mouse.x = e.clientX * scaleFactor; mouse.y = e.clientY * scaleFactor; });
     window.addEventListener('mousedown', () => mouse.down = true);
     window.addEventListener('mouseup', () => mouse.down = false);
 
-    // Touch
     canvas.addEventListener('touchstart', e => {
-        e.preventDefault();
-        mouse.down = true;
-        mouse.x = e.touches[0].clientX * scaleFactor;
-        mouse.y = e.touches[0].clientY * scaleFactor;
-        if(drones.length === 0) location.reload();
+        e.preventDefault(); mouse.down = true;
+        mouse.x = e.touches[0].clientX * scaleFactor; mouse.y = e.touches[0].clientY * scaleFactor;
     }, {passive: false});
-
     canvas.addEventListener('touchmove', e => {
         e.preventDefault();
-        mouse.x = e.touches[0].clientX * scaleFactor;
-        mouse.y = e.touches[0].clientY * scaleFactor;
+        mouse.x = e.touches[0].clientX * scaleFactor; mouse.y = e.touches[0].clientY * scaleFactor;
     }, {passive: false});
-
-    canvas.addEventListener('touchend', e => {
-        e.preventDefault();
-        mouse.down = false;
-    }, {passive: false});
-    
-    document.getElementById('overlay').addEventListener('click', () => location.reload());
+    canvas.addEventListener('touchend', e => { e.preventDefault(); mouse.down = false; }, {passive: false});
 
     resize();
     window.addEventListener('resize', resize);
     
+    // Spawn Idle Drones for Title Screen
     for(let i=0; i<CONFIG.droneCount; i++) drones.push(new Drone(width/2, height/2));
     loop();
 
