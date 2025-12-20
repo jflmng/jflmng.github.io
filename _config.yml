@@ -45,7 +45,7 @@ navigation:
 author:
   name: "James Fleming"
   avatar: "/assets/images/profile.jpg" # You might need to add this image later
-  bio: "Lecturer in Computer Science"
+  bio: "Senior Lecturer in Intelligent Control Systems"
   location: "Loughborough, UK"
   links:
     - label: "Email"
