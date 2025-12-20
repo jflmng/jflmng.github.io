@@ -26,6 +26,25 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "jflmng.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
 github_username:  jflmng
+minimal_mistakes_skin: default
+search: true
+
+# Author / Sidebar
+author:
+  name: "James Fleming"
+  avatar: "/assets/images/profile.jpg" # You might need to add this image later
+  bio: "Lecturer in Computer Science"
+  location: "Loughborough, UK"
+  links:
+    - label: "Email"
+      icon: "fas fa-fw fa-envelope-square"
+      url: "mailto:j.fleming@lboro.ac.uk"
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/jflmng"
+    - label: "Google Scholar"
+      icon: "ai ai-google-scholar-square mobile-only" # academicons
+      url: "https://scholar.google.com/citations?user=qXhzsAMAAAAJ"
 
 # Google analytics tag
 google_analytics: G-ZYS6HM1QMD
@@ -35,15 +54,16 @@ paginate: 5 # amount of posts to show
 paginate_path: /page:num/
 
 # Build settings
-remote_theme: jekyll/minima
+remote_theme: mmistakes/minimal-mistakes
 
 plugins:
   - jekyll-remote-theme
+  - jekyll-include-cache
   - jekyll-feed
 
-# Minima skin to use
-minima:
-  skin: classic
+# Minima skin to use (Disabled)
+# minima:
+#   skin: classic
 
 # Exclude from processing.
 # The following items will not be processed, by default.
