@@ -35,5 +35,5 @@ Many important control problems in industry involve optimising a performance mea
 ### Model predictive control and its applications
 MPC predicts and optimises future system states. To handle uncertainty without computationally prohibitive complexity, we have developed approaches that consider **sets** of predicted states. This leads to robust controllers with applications in:
 *   **Driver Assistance:** Reducing energy usage by predicting traffic conditions.
-*   **Vehicle Systems:** Intelligent air conditioning scheduling.
+*   **Intelligent Vehicles:** Heterogeneous vehicle platoons.
 *   **Motorcycles:** Gyroscopic stabilisation systems for enhanced stability.
