@@ -29,6 +29,18 @@ github_username:  jflmng
 minimal_mistakes_skin: default
 search: true
 
+# Navigation
+navigation:
+  main:
+    - title: "About"
+      url: /about/
+    - title: "Research"
+      url: /research/
+    - title: "Publications"
+      url: /publications/
+    - title: "Presentations"
+      url: /presentations/
+
 # Author / Sidebar
 author:
   name: "James Fleming"
