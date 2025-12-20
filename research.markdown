@@ -5,14 +5,35 @@ title: Research
 permalink: /research/
 ---
 
-## Optimal control of constrained and uncertain systems
+## Current Projects
 
-Many important control problems in industry involve optimising a performance measure such as cost or energy consumption of a process while satisfying constraints, which may be safety critical. But real-world control systems must deal with uncertainty in the controlled process, giving satisfaction of constraints and good performance in all or almost all cases.
+### Learning of Safety-Critical Model Predictive Controllers for Autonomous Systems
+**Funded by EPSRC (New Investigator Award)** | [Project Details](https://gtr.ukri.org/projects?ref=EP%2FX015459%2F1)
 
-Advanced modelling and control techniques have great potential to improve energy economy and safety in the automotive and renewable energy sectors. This is especially true given the recent pushes towards electrification of powertrains and incorporation of driver assistance systems in cars, with all new cars in the UK planned to be zero emission by 2040, and several forms of safety-related driver assistance such as autonomous emergency braking, lane-keeping assistance, and intelligent speed assistance being mandatory in new vehicles within the EU from 2022. In the renewable energy sector, advanced control can improve the lifespan and output of wind turbines and wind farms.
+Mobile robots and autonomous vehicles rely heavily on motion control techniques. Model Predictive Control (MPC) is a powerful framework for this, offering strong safety assurances but requiring significant expert knowledge to implement. Conversely, AI techniques like reinforcement learning can learn control policies automatically but lack safety guarantees.
 
-## Model predictive control and its applications
+This project aims to bridge this gap by developing AI methods to **automatically design MPC for safe motion control** of autonomous systems.
+*   **Goal:** Enable rapid design of safe controllers, reducing development time/cost while improving reliability.
+*   **Approach:** Differentiating MPC controllers to train them within reinforcement learning frameworks.
+*   **Applications:** Autonomous vehicles and stability-assisted motorcycles (in partnership with Dynamotion and the University of Padova).
 
-Model Predictive Control (MPC) forms a powerful framework for constrained control in which the state of the system is predicted and optimised over some future horizon, but work is still ongoing to develop algorithms that account for uncertainty. Naive approaches typically have a computational complexity that grows exponentially as predictions are made further into the future, making them unusable. To remedy this, we have developed approaches that consider sets of predicted states rather than the states themselves. This adds a little conservatism but leads to controllers that work very well in practice, with many applications throughout the automotive, electrical power and renewable energy industries.
+### Holly Health: AI-Driven Chronic Condition Management
+**Funded by Innovate UK**
 
-Some recent examples are the design of driver assistance and autonomous driving systems that use modelling and prediction of conventional and electrified powertrains and upcoming traffic conditions to reduce energy usage when following other vehicles, intelligent vehicle air conditioning that uses less fuel by scheduling use of a compressor when the combustion engine is operating at high efficiency, and gyroscopic stabilisation systems for motorcycles that enhance stability and handling during cornering and under heavy braking.
+In partnership with [Holly Health](https://hollyhealth.io/) and Modality Partnership, we are developing the **Prevent App**, an innovative digital health tool to help individuals manage multiple chronic conditions.
+*   **Technology:** A Just-in-Time Adaptive Intervention (JITAI) machine learning system that delivers personalized coaching interventions.
+*   **Impact:** Targeting the 30% of UK adults with multimorbidity to improve health outcomes and reduce NHS burden.
+*   **Role:** Combining behavioural science with machine learning to tailor support for evolving patient needs.
+
+---
+
+## Research Themes
+
+### Optimal control of constrained and uncertain systems
+Many important control problems in industry involve optimising a performance measure while satisfying safety-critical constraints. Real-world systems must handle uncertainty. We develop advanced modelling and control techniques to improve energy economy and safety in automotive and renewable sectors.
+
+### Model predictive control and its applications
+MPC predicts and optimises future system states. To handle uncertainty without computationally prohibitive complexity, we have developed approaches that consider **sets** of predicted states. This leads to robust controllers with applications in:
+*   **Driver Assistance:** Reducing energy usage by predicting traffic conditions.
+*   **Vehicle Systems:** Intelligent air conditioning scheduling.
+*   **Motorcycles:** Gyroscopic stabilisation systems for enhanced stability.

@@ -6,13 +6,23 @@ layout: home
 author_profile: true
 ---
 
-{% for post in site.posts %}
-  <article>
-    <h2>
-      <a href="{{ post.url }}">
-        {{ post.title }}
-      </a>
-    </h2>
-    <time datetime="{{ post.date | date: "%Y-%m-%d" }}">{{ post.date | date_to_long_string }}</time>
-  </article>
-{% endfor %}
+## Welcome
+
+I am a **Senior Lecturer (Associate Professor) in Intelligent Control Systems** at Loughborough University's Wolfson School of Mechanical, Electrical and Manufacturing Engineering.
+
+My research focuses on **Optimal Control**, **Model Predictive Control (MPC)**, and **Machine Learning** for constrained and uncertain systems, with applications in **autonomous vehicles**, **motorcycles**, and **renewable energy**.
+
+### Research Highlights
+*   **Safe Autonomy**: Developing AI methods to automatically design MPC for safe motion control of autonomous systems.
+*   **Holly Health**: Partnering with industry to create AI-driven apps for managing chronic health conditions.
+
+[Read more about my research](/research/){: .btn .btn--primary}
+
+### Latest News
+<ul>
+  {% for post in site.posts limit:3 %}
+    <li>
+      <a href="{{ post.url }}">{{ post.title }}</a> <span class="archive__item-caption">({{ post.date | date: "%Y-%m-%d" }})</span>
+    </li>
+  {% endfor %}
+</ul>
