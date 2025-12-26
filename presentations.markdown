@@ -5,14 +5,29 @@ title: Presentations
 permalink: /presentations/
 ---
 
-June 2023 writing retreat talk on NIA:
-[pptx](/download/New_Investigator_Award_JF.pptx) [pdf](/download/New_Investigator_Award_JF.pdf)
+<div class="notice--info">
+  <h4>Writing Retreat Talk on NIA</h4>
+  <p><strong>June 2023</strong></p>
+  <a href="/download/New_Investigator_Award_JF.pptx" class="btn btn--primary"><i class="fas fa-file-powerpoint"></i> PPTX</a>
+  <a href="/download/New_Investigator_Award_JF.pdf" class="btn btn--info"><i class="fas fa-file-pdf"></i> PDF</a>
+</div>
 
-April 2024 IMechE mini symposium talk:
-[pptx](/download/CONTROL2024_IMechEsymp_JF.pptx) [pdf](/download/CONTROL2024_IMechEsymp_JF.pdf)
+<div class="notice--info">
+  <h4>IMechE Mini Symposium Talk</h4>
+  <p><strong>April 2024</strong></p>
+  <a href="/download/CONTROL2024_IMechEsymp_JF.pptx" class="btn btn--primary"><i class="fas fa-file-powerpoint"></i> PPTX</a>
+  <a href="/download/CONTROL2024_IMechEsymp_JF.pdf" class="btn btn--info"><i class="fas fa-file-pdf"></i> PDF</a>
+</div>
 
-November 2024 Electrical and Robotics Community talk:
-[pptx](/download/NIA_updated_JF.pptx) [pdf](/download/NIA_updated_JF.pdf)
+<div class="notice--info">
+  <h4>Electrical and Robotics Community Talk</h4>
+  <p><strong>November 2024</strong></p>
+  <a href="/download/NIA_updated_JF.pptx" class="btn btn--primary"><i class="fas fa-file-powerpoint"></i> PPTX</a>
+  <a href="/download/NIA_updated_JF.pdf" class="btn btn--info"><i class="fas fa-file-pdf"></i> PDF</a>
+</div>
 
-December 2024 CDC Presentation on LPV MPC
-[pdf](/download/Robust_tube_MPC_for_LPV_A__updated_ (1).pdf)
+<div class="notice--info">
+  <h4>CDC Presentation on LPV MPC</h4>
+  <p><strong>December 2024</strong></p>
+  <a href="/download/Robust_tube_MPC_for_LPV_A__updated_ (1).pdf" class="btn btn--info"><i class="fas fa-file-pdf"></i> PDF</a>
+</div>
