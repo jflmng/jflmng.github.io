@@ -129,6 +129,10 @@ a{color:var(--accent)}
 .unsure{margin-top:28px}
 ul.plain{padding-left:1.1em;margin:0 0 14px;max-width:62ch}
 ul.plain li{margin-bottom:6px}
+.predsec h3.sub{display:flex;align-items:baseline;gap:8px;margin:18px 0 0;color:var(--ink);font-weight:700;font-size:1.05rem}
+.predsec h3.sub .n{font-family:var(--body);font-weight:400;font-size:.88rem;color:var(--muted)}
+.predsec h3.sub + .small{margin-bottom:2px}
+.grouphelp{margin:-2px 0 6px}
 
 nav.tabs button{flex:1;border:0;background:none;padding:10px 4px;border-radius:10px;font-weight:700;font-size:.95rem;color:var(--muted);cursor:pointer;position:relative;font-family:var(--body)}
 nav.tabs button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
@@ -165,16 +169,18 @@ section[hidden]{display:none}
   <section id="profile" role="tabpanel" hidden>
     <h2>Your sensitivities</h2>
     <p class="callout" id="noRatings" hidden>No foods rated yet. Rate some on the <a href="#foods" data-goto="foods">Foods tab</a> and your profile appears here.</p>
-    <p class="small">Everyone starts at zero. Only foods you mark as a problem push a group up; foods you mark as fine hold it down. A sensitivity of 1 means a moderate serving of that group, on its own, fills your tank to the medium-symptoms line.</p>
-    <h3>Shared tank</h3>
+    <p class="small">Everyone starts at zero. Only foods you mark as a problem push a group up; foods you mark as fine hold it down. A sensitivity of 1 means a moderate serving of that group, on its own, is enough for medium symptoms.</p>
+    <h3>Combined load</h3>
+    <p class="small grouphelp">These five add together in your gut, so a meal with several of them counts as one bigger dose.</p>
     <div class="group" id="tankGroup"></div>
-    <h3>Separate</h3>
+    <h3>Lactose, on its own</h3>
+    <p class="small grouphelp">Depends on how much lactase your gut makes, so it doesn’t add to the others.</p>
     <div class="group" id="lacGroup"></div>
     <div id="unexplained"></div>
   </section>
   <section id="predict" role="tabpanel" hidden>
     
-    <p class="small intro">Predictions for foods you haven’t rated, for a typical serving eaten on its own. Tap a food to see how it fills your tank.</p>
+    <p class="small intro">Predictions for foods you haven’t rated, for a typical serving eaten on its own. Tap a food to see how much of your limit it uses.</p>
     <div id="predList"></div>
   </section>
   <section id="model" role="tabpanel" hidden>
@@ -182,7 +188,7 @@ section[hidden]{display:none}
     <p>Each food <var>f</var> has a dose <var>d</var><sub>f,k</sub> of each FODMAP group <var>k</var>, at a typical serving, in multiples of the low-FODMAP cut-off. In this demo the ratings stand in for grams: moderate = 1, high = 3.</p>
     <p>Each person has six sensitivities <var>s</var><sub>k</sub> ≥ 0, one per group, where <var>s</var><sub>k</sub> = 1 / (dose of <var>k</var> that gives medium symptoms on its own).</p>
     <div class="eq">
-      <div><span class="k">Shared tank (fructans, GOS, excess fructose, sorbitol, mannitol)</span><span class="m"><var>T</var><sub>f</sub> = Σ<sub>k ∈ tank</sub> <var>s</var><sub>k</sub> <var>d</var><sub>f,k</sub></span></div>
+      <div><span class="k">Combined load (fructans, GOS, excess fructose, sorbitol, mannitol)</span><span class="m"><var>T</var><sub>f</sub> = Σ<sub>k ∈ combined</sub> <var>s</var><sub>k</sub> <var>d</var><sub>f,k</sub></span></div>
       <div><span class="k">Lactose, on its own</span><span class="m"><var>A</var><sub>f</sub> = <var>s</var><sub>lac</sub> <var>d</var><sub>f,lac</sub></span></div>
       <div><span class="k">Hurdle curve</span><span class="m"><var>H</var>(<var>x</var>) = <var>x</var><sup>β</sup> / (1 + <var>x</var><sup>β</sup>)</span></div>
       <div><span class="k">Chance of any symptoms</span><span class="m"><var>p</var><sub>f</sub> = 1 − (1 − <var>b</var>)(1 − <var>H</var>(<var>T</var><sub>f</sub>))(1 − <var>H</var>(<var>A</var><sub>f</sub>))</span></div>
@@ -200,8 +206,8 @@ section[hidden]{display:none}
     <ul class="plain">
       <li><b>Unsure</b> if the food is moderate or high in a group you haven’t rated any food for. These are left out.</li>
       <li><b>Likely fine</b> if the average is within 12 points of the background rate and the 90th percentile within 25.</li>
-      <li><b>Fine in small portions</b> if a typical serving isn’t, but half or a quarter serving passes the same test. Doses scale with the portion.</li>
-      <li><b>Likely to cause problems</b> if even the 10th percentile is 25 points above background.</li>
+      <li><b>Likely to cause problems, fine in small portions</b> if a typical serving isn’t fine, but half or a quarter serving passes the same test. Doses scale with the portion.</li>
+      <li><b>Likely to cause problems, even in small portions</b> if even the 10th percentile is 25 points above background and no smaller portion passes.</li>
       <li>Anything else counts as unsure, with mixed evidence.</li>
     </ul>
 
@@ -216,7 +222,7 @@ section[hidden]{display:none}
     <h2>Porting notes</h2>
     <p><code>js/model.js</code> is plain functions with no libraries — <code>predict</code>, <code>logPost</code>, <code>grad</code>, <code>fit</code>, <code>sample</code>, <code>classify</code> — and translates line for line to Kotlin.</p>
     <p>The food data here is a demo subset in the same shape as the 200-entry reference: six group ratings per food. Swap in the full reference and map low → 0.2, moderate → 1, high → 3, unknown → 0.5 (flagged). Where a food is dominated by one group, typical serving ÷ low serving is a better dose estimate than the rating. Ratings are recalled rather than verified, so check them against the Monash app before relying on them.</p>
-    <p>For a diary mode later, sum doses over a meal window and feed them through the same equations — that’s where stacking in the shared tank shows up.</p>
+    <p>For a diary mode later, sum doses over a meal window and feed them through the same equations — that’s where stacking in the combined load shows up.</p>
   </section>
   <footer class="foot small">
     <p>A demo, not medical advice. Food ratings are approximate and unverified; check them against the Monash FODMAP app. Your ratings stay in this browser and aren’t sent anywhere.</p>
@@ -227,7 +233,7 @@ section[hidden]{display:none}
    Ratings list only groups that are moderate (M) or high (H) at a typical serving.
    Keys: fr fructans, go GOS, fc excess fructose, so sorbitol, ma mannitol, la lactose.
    Recalled rather than verified; check against the Monash app before relying on it. */
-const FOODS_RAW = [["Vegetables", "Garlic", "fr:H"], ["Vegetables", "Onion", "fr:H"], ["Vegetables", "Leek (white part)", "fr:H"], ["Vegetables", "Spring onion (green tops)", ""], ["Vegetables", "Asparagus", "fc:H fr:M"], ["Vegetables", "Globe artichoke", "fr:H"], ["Vegetables", "Cauliflower", "ma:H"], ["Vegetables", "Mushrooms (button)", "ma:H"], ["Vegetables", "Celery", "ma:M"], ["Vegetables", "Sweetcorn", "so:M"], ["Vegetables", "Avocado (half)", "so:H"], ["Vegetables", "Beetroot", "fr:M go:M"], ["Vegetables", "Savoy cabbage", "fr:M"], ["Vegetables", "Brussels sprouts", "fr:M"], ["Vegetables", "Butternut squash", "ma:M"], ["Vegetables", "Sweet potato", "ma:M"], ["Vegetables", "Garden peas", "fr:M go:M"], ["Vegetables", "Broccoli (florets)", ""], ["Vegetables", "Carrot", ""], ["Vegetables", "Courgette", ""], ["Vegetables", "Potato", ""], ["Vegetables", "Tomato", ""], ["Vegetables", "Cucumber", ""], ["Vegetables", "Red pepper", ""], ["Vegetables", "Spinach", ""], ["Vegetables", "Green beans", ""], ["Vegetables", "Aubergine", ""], ["Vegetables", "Parsnip", ""], ["Vegetables", "Kale", ""], ["Fruit", "Apple", "fc:H so:H"], ["Fruit", "Pear", "fc:H so:H"], ["Fruit", "Mango", "fc:H"], ["Fruit", "Watermelon", "fc:H fr:H ma:H"], ["Fruit", "Cherries", "fc:H so:H"], ["Fruit", "Peach", "so:H"], ["Fruit", "Plums", "so:H"], ["Fruit", "Apricots", "so:H"], ["Fruit", "Blackberries", "so:H"], ["Fruit", "Banana (ripe)", "fr:H"], ["Fruit", "Banana (firm)", ""], ["Fruit", "Raisins", "fr:H"], ["Fruit", "Dates", "fr:H"], ["Fruit", "Grapes", ""], ["Fruit", "Strawberries", ""], ["Fruit", "Blueberries", ""], ["Fruit", "Orange", ""], ["Fruit", "Kiwi", ""], ["Fruit", "Pineapple", ""], ["Fruit", "Raspberries", ""], ["Grains", "White wheat bread", "fr:H"], ["Grains", "Wholemeal bread", "fr:H"], ["Grains", "Rye bread", "fr:H"], ["Grains", "Wheat pasta", "fr:H"], ["Grains", "Couscous", "fr:H"], ["Grains", "Pearl barley", "fr:H"], ["Grains", "Spelt sourdough", ""], ["Grains", "Porridge oats", ""], ["Grains", "Rice", ""], ["Grains", "Gluten-free pasta", ""], ["Grains", "Quinoa", ""], ["Legumes", "Chickpeas (tinned)", "go:H"], ["Legumes", "Red kidney beans", "go:H fr:H"], ["Legumes", "Baked beans", "go:H fr:H"], ["Legumes", "Red lentils", "go:H fr:M"], ["Legumes", "Hummus", "go:H fr:H"], ["Legumes", "Butter beans", "go:H"], ["Legumes", "Soya milk (whole bean)", "go:H fr:H"], ["Legumes", "Firm tofu", ""], ["Legumes", "Edamame", ""], ["Nuts and seeds", "Cashews", "go:H fr:H"], ["Nuts and seeds", "Pistachios", "go:H fr:H"], ["Nuts and seeds", "Almonds", "go:M"], ["Nuts and seeds", "Hazelnuts", "go:M"], ["Nuts and seeds", "Peanuts", ""], ["Nuts and seeds", "Walnuts", ""], ["Nuts and seeds", "Macadamias", ""], ["Dairy", "Cow's milk", "la:H"], ["Dairy", "Natural yoghurt", "la:H"], ["Dairy", "Ice cream", "la:H"], ["Dairy", "Custard", "la:H"], ["Dairy", "Greek yoghurt", "la:M"], ["Dairy", "Cottage cheese", "la:M"], ["Dairy", "Ricotta", "la:M"], ["Dairy", "Cream cheese", "la:M"], ["Dairy", "Lactose-free milk", ""], ["Dairy", "Cheddar", ""], ["Dairy", "Parmesan", ""], ["Dairy", "Brie", ""], ["Dairy", "Butter", ""], ["Meat, fish and eggs", "Pork sausages (with rusk)", "fr:M"], ["Meat, fish and eggs", "Chicken", ""], ["Meat, fish and eggs", "Beef", ""], ["Meat, fish and eggs", "Eggs", ""], ["Meat, fish and eggs", "Salmon", ""], ["Sweet things and condiments", "Honey", "fc:H"], ["Sweet things and condiments", "Agave syrup", "fc:H"], ["Sweet things and condiments", "Sugar-free mints", "so:H"], ["Sweet things and condiments", "Milk chocolate", "la:M"], ["Sweet things and condiments", "Stock cube", "fr:H"], ["Sweet things and condiments", "Ketchup", "fr:M"], ["Sweet things and condiments", "Maple syrup", ""], ["Sweet things and condiments", "Dark chocolate", ""], ["Sweet things and condiments", "Soy sauce", ""], ["Sweet things and condiments", "Chilli", ""], ["Sweet things and condiments", "Garlic-infused oil", ""], ["Drinks", "Chamomile tea", "fr:H"], ["Drinks", "Fennel tea", "fr:H"], ["Drinks", "Apple juice", "fc:H so:H"], ["Drinks", "Rum", "fc:H"], ["Drinks", "Coffee", ""], ["Drinks", "Black tea", ""], ["Drinks", "Beer", ""], ["Drinks", "Red wine", ""]];
+const FOODS_RAW = [["Vegetables", "Garlic", "fr:H"], ["Vegetables", "Onion", "fr:H"], ["Vegetables", "Leek (white part)", "fr:H"], ["Vegetables", "Spring onion (green tops)", ""], ["Vegetables", "Asparagus", "fc:H fr:M"], ["Vegetables", "Globe artichoke", "fr:H"], ["Vegetables", "Cauliflower", "ma:H"], ["Vegetables", "Mushrooms (button)", "ma:H"], ["Vegetables", "Celery", "ma:M"], ["Vegetables", "Sweetcorn", "so:M"], ["Vegetables", "Avocado (half)", "so:H"], ["Vegetables", "Beetroot", "fr:M go:M"], ["Vegetables", "Savoy cabbage", "fr:M"], ["Vegetables", "Brussels sprouts", "fr:M"], ["Vegetables", "Butternut squash", "ma:M"], ["Vegetables", "Sweet potato", "ma:M"], ["Vegetables", "Garden peas", "fr:M go:M"], ["Vegetables", "Broccoli (florets)", ""], ["Vegetables", "Carrot", ""], ["Vegetables", "Courgette", ""], ["Vegetables", "Potato", ""], ["Vegetables", "Tomato", ""], ["Vegetables", "Cucumber", ""], ["Vegetables", "Red pepper", ""], ["Vegetables", "Spinach", ""], ["Vegetables", "Green beans", ""], ["Vegetables", "Aubergine", ""], ["Vegetables", "Parsnip", ""], ["Vegetables", "Kale", ""], ["Fruit", "Apple", "fc:H so:H"], ["Fruit", "Pear", "fc:H so:H"], ["Fruit", "Mango", "fc:H"], ["Fruit", "Watermelon", "fc:H fr:H ma:H"], ["Fruit", "Cherries", "fc:H so:H"], ["Fruit", "Peach", "so:H"], ["Fruit", "Plums", "so:H"], ["Fruit", "Apricots", "so:H"], ["Fruit", "Blackberries", "so:H"], ["Fruit", "Banana (ripe)", "fr:H"], ["Fruit", "Banana (firm)", ""], ["Fruit", "Raisins", "fr:H"], ["Fruit", "Dates", "fr:H"], ["Fruit", "Grapes", ""], ["Fruit", "Strawberries", ""], ["Fruit", "Blueberries", ""], ["Fruit", "Orange", ""], ["Fruit", "Kiwi", ""], ["Fruit", "Pineapple", ""], ["Fruit", "Raspberries", ""], ["Grains", "White wheat bread", "fr:H"], ["Grains", "Wholemeal bread", "fr:H"], ["Grains", "Rye bread", "fr:H"], ["Grains", "Wheat pasta", "fr:H"], ["Grains", "Couscous", "fr:H"], ["Grains", "Pearl barley", "fr:H"], ["Grains", "Spelt sourdough", ""], ["Grains", "Porridge oats", ""], ["Grains", "Rice", ""], ["Grains", "Gluten-free pasta", ""], ["Grains", "Quinoa", ""], ["Legumes", "Chickpeas (tinned)", "go:H"], ["Legumes", "Red kidney beans", "go:H fr:H"], ["Legumes", "Baked beans", "go:H fr:H"], ["Legumes", "Red lentils", "go:H fr:M"], ["Legumes", "Hummus", "go:H fr:H"], ["Legumes", "Butter beans", "go:H"], ["Legumes", "Soya milk (whole bean)", "go:H fr:H"], ["Legumes", "Firm tofu", ""], ["Legumes", "Edamame", ""], ["Nuts and seeds", "Cashews", "go:H fr:H"], ["Nuts and seeds", "Pistachios", "go:H fr:H"], ["Nuts and seeds", "Almonds", "go:M"], ["Nuts and seeds", "Hazelnuts", "go:M"], ["Nuts and seeds", "Peanuts", ""], ["Nuts and seeds", "Walnuts", ""], ["Nuts and seeds", "Macadamias", ""], ["Dairy", "Cow's milk", "la:H"], ["Dairy", "Natural yoghurt", "la:H"], ["Dairy", "Ice cream", "la:H"], ["Dairy", "Custard", "la:H"], ["Dairy", "Goat's milk", "la:H"], ["Dairy", "Evaporated milk", "la:H"], ["Dairy", "Condensed milk", "la:H"], ["Dairy", "Milkshake", "la:H"], ["Dairy", "Rice pudding", "la:H"], ["Dairy", "Greek yoghurt", "la:M"], ["Dairy", "Cottage cheese", "la:M"], ["Dairy", "Ricotta", "la:M"], ["Dairy", "Cream cheese", "la:M"], ["Dairy", "Single cream", "la:M"], ["Dairy", "Lactose-free milk", ""], ["Dairy", "Cheddar", ""], ["Dairy", "Parmesan", ""], ["Dairy", "Brie", ""], ["Dairy", "Feta", ""], ["Dairy", "Butter", ""], ["Meat, fish and eggs", "Pork sausages (with rusk)", "fr:M"], ["Meat, fish and eggs", "Chicken", ""], ["Meat, fish and eggs", "Beef", ""], ["Meat, fish and eggs", "Eggs", ""], ["Meat, fish and eggs", "Salmon", ""], ["Sweet things and condiments", "Honey", "fc:H"], ["Sweet things and condiments", "Agave syrup", "fc:H"], ["Sweet things and condiments", "Sugar-free mints", "so:H"], ["Sweet things and condiments", "Milk chocolate", "la:M"], ["Sweet things and condiments", "Stock cube", "fr:H"], ["Sweet things and condiments", "Ketchup", "fr:M"], ["Sweet things and condiments", "Maple syrup", ""], ["Sweet things and condiments", "Dark chocolate", ""], ["Sweet things and condiments", "Soy sauce", ""], ["Sweet things and condiments", "Chilli", ""], ["Sweet things and condiments", "Garlic-infused oil", ""], ["Drinks", "Chamomile tea", "fr:H"], ["Drinks", "Fennel tea", "fr:H"], ["Drinks", "Apple juice", "fc:H so:H"], ["Drinks", "Rum", "fc:H"], ["Drinks", "Latte (cow's milk)", "la:H"], ["Drinks", "Coffee", ""], ["Drinks", "Black tea", ""], ["Drinks", "Beer", ""], ["Drinks", "Red wine", ""]];
 
 /* Bayesian FODMAP model: hurdle model core.
    Plain functions, no dependencies, so this file ports line for line to Kotlin.
@@ -437,7 +443,7 @@ function predictAll() {
   return FOODS.filter(f => state.ratings[f.id] === undefined).map(f => ({ f, ...classify(state.draws, f.d, state.P, tested) }));
 }
 function updateBadge() {
-  const n = predictAll().filter(x => x.cat === 'problem').length;
+  const n = predictAll().filter(x => x.cat === 'problem' || x.cat === 'moderation').length;
   const b = $('predBadge'); if (!b) return;
   b.hidden = n === 0; b.textContent = n;
 }
@@ -529,7 +535,7 @@ function tankSVG(f, portion) {
   });
   const lineT = base - vh / maxT, lineA = base - vh / maxA, aH = Math.min(A, maxA) / maxA * vh;
   const uid = 'c' + f.id;
-  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Tank fill for ${esc(f.name)}">
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Load for ${esc(f.name)}">
     <defs><clipPath id="${uid}T"><rect x="12" y="${top}" width="106" height="${vh}" rx="10"/></clipPath><clipPath id="${uid}A"><rect x="150" y="${top}" width="56" height="${vh}" rx="10"/></clipPath></defs>
     <g clip-path="url(#${uid}T)">${seg.join('')}</g>
     <rect x="12" y="${top}" width="106" height="${vh}" rx="10" fill="none" stroke="var(--ink)" stroke-width="2"/>
@@ -537,27 +543,27 @@ function tankSVG(f, portion) {
     <g clip-path="url(#${uid}A)"><rect x="150" y="${base - aH}" width="56" height="${aH}" fill="var(--la)"/></g>
     <rect x="150" y="${top}" width="56" height="${vh}" rx="10" fill="none" stroke="var(--ink)" stroke-width="2"/>
     <line x1="142" x2="214" y1="${lineA}" y2="${lineA}" stroke="var(--ink)" stroke-dasharray="5 4" stroke-width="1.5"/>
-    <text x="65" y="${H - 4}" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="var(--body)">Shared tank</text>
+    <text x="65" y="${H - 4}" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="var(--body)">Combined load</text>
     <text x="178" y="${H - 4}" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="var(--body)">Lactose</text>
   </svg>`;
 }
 const pc = v => Math.round(v * 100) + '%';
 const lower = k => GROUPS[k].key === 'go' ? 'GOS' : GROUPS[k].name.toLowerCase();
 const groupList = (ks, joiner = 'or') => { const n = [...ks].sort((a, b) => a - b).map(lower); return n.length < 2 ? n.join('') : n.slice(0, -1).join(', ') + ` ${joiner} ` + n[n.length - 1]; };
-const TANK_NOTE = '<p class="small">The dashed line is where you’d expect medium symptoms. Groups share one tank, so a food with several groups adds them together. Lactose fills its own.</p>';
+const TANK_NOTE = '<p class="small">The dashed line is where you’d expect medium symptoms. The five groups on the left add together, so a food with several of them counts as one bigger dose. Lactose is measured on its own.</p>';
 
 function predRow(x) {
   const { f, cat } = x, open = ui.open === f.id;
   const portion = cat === 'moderation' ? x.portion.f : 1;
   const { contrib, tot, main } = contributions(f, portion);
-  const mostly = main.length ? 'Mostly ' + main.slice(0, 2).map(m => lower(m.k)).join(' and ') : '';
+  const mostly = contrib.length === 1 ? 'From ' + lower(contrib[0].k) : main.length ? 'Mostly ' + main.slice(0, 2).map(m => lower(m.k)).join(' and ') : '';
   let why, right, bar = '', body;
   if (cat === 'problem') {
     why = mostly; right = pc(x.full.mean);
     body = `<p><b>${pc(x.full.mean)}</b> chance of symptoms from a typical serving, likely somewhere between ${pc(x.full.lo)} and ${pc(x.full.hi)}.</p>`;
   } else if (cat === 'moderation') {
     why = `Full serving ${pc(x.full.mean)}. ${mostly}.`; right = x.portion.short;
-    body = `<p><b>${x.portion.label}:</b> ${pc(x.small.mean)} chance of symptoms. A typical serving: ${pc(x.full.mean)}.</p><p class="small">The tank shows the smaller portion.</p>`;
+    body = `<p><b>${x.portion.label}:</b> ${pc(x.small.mean)} chance of symptoms. A typical serving: ${pc(x.full.mean)}.</p><p class="small">The chart shows the smaller portion.</p>`;
   } else {
     const loaded = f.d.map((v, k) => v >= 1 ? k : -1).filter(k => k >= 0);
     const tolerated = loaded.filter(k => state.s[k] < 0.05), reactive = loaded.filter(k => state.s[k] >= 0.05);
@@ -575,34 +581,35 @@ function predRow(x) {
     <span><span>${esc(f.name)}</span><br><span class="why">${esc(why)}</span></span><span class="pct">${right}</span>${bar}</button>
     ${open ? `<div class="detail">${tankSVG(f, portion)}<div class="txt">${body}${TANK_NOTE}</div></div>` : ''}</div>`;
 }
-const SECTIONS = [
-  { cat: 'problem', title: 'Likely to cause problems', note: 'Even at the hopeful end, a typical serving carries a real chance of symptoms.', show: 5 },
-  { cat: 'moderation', title: 'Fine in small portions', note: 'A typical serving is risky, but a smaller one should be fine.', show: 5 },
-  { cat: 'fine', title: 'Likely fine', note: 'Low risk at a typical serving.', show: 6 }
-];
+// Both 'problem' and 'moderation' foods are risky at a typical serving, so they sit
+// together under one heading; moderation foods also get a portion that should be fine.
+function listBlock(key, list, show) {
+  if (!list.length) return '';
+  const more = list.length > show && !ui.expanded[key];
+  let h = (more ? list.slice(0, show) : list).map(predRow).join('');
+  if (list.length > show) h += `<button class="more" data-more="${key}">${ui.expanded[key] ? 'Show fewer' : `Show all ${list.length}`}</button>`;
+  return h;
+}
 function renderPredictions() {
   const nRated = Object.keys(state.ratings).length;
   if (!nRated) { $('predList').innerHTML = `<p class="empty">Rate a few foods on the <a href="#foods" data-goto="foods">Foods tab</a> to see predictions. Start with ones you’re sure about, good or bad.</p>`; return; }
-  const all = predictAll();
   const by = { problem: [], moderation: [], fine: [], unsure: [] };
-  all.forEach(x => by[x.cat].push(x));
+  predictAll().forEach(x => by[x.cat].push(x));
   by.problem.sort((a, b) => b.full.mean - a.full.mean);
   by.moderation.sort((a, b) => b.full.mean - a.full.mean);
   const hasLoad = x => x.f.d.some(v => v >= 1);
   by.fine.sort((a, b) => hasLoad(b) - hasLoad(a));
-  let html = '';
-  for (const s of SECTIONS) {
-    const list = by[s.cat];
-    html += `<section class="predsec"><h2>${s.title} <span class="n">${list.length}</span></h2><p class="small">${s.note}</p>`;
-    if (!list.length) {
-      html += `<p class="none">${s.cat === 'problem' && !Object.values(state.ratings).some(y => y > 0) ? 'Nothing yet. Mark foods that give you symptoms as mild or severe.' : 'None at the moment.'}</p>`;
-    } else {
-      const more = list.length > s.show && !ui.expanded[s.cat];
-      html += (more ? list.slice(0, s.show) : list).map(predRow).join('');
-      if (list.length > s.show) html += `<button class="more" data-more="${s.cat}">${ui.expanded[s.cat] ? 'Show fewer' : `Show all ${list.length}`}</button>`;
-    }
-    html += '</section>';
+  const nProb = by.problem.length + by.moderation.length;
+  let html = `<section class="predsec"><h2>Likely to cause problems <span class="n">${nProb}</span></h2><p class="small">A typical serving carries a real chance of symptoms.</p>`;
+  if (!nProb) {
+    html += `<p class="none">${Object.values(state.ratings).some(y => y > 0) ? 'None at the moment.' : 'Nothing yet. Mark foods that give you symptoms as mild or severe.'}</p>`;
+  } else {
+    if (by.problem.length) html += `<h3 class="sub">Even in small portions <span class="n">${by.problem.length}</span></h3><p class="small">A quarter serving is still likely to be too much.</p>` + listBlock('problem', by.problem, 5);
+    if (by.moderation.length) html += `<h3 class="sub">Fine in small portions <span class="n">${by.moderation.length}</span></h3><p class="small">A smaller portion should be fine. The size is on the right.</p>` + listBlock('moderation', by.moderation, 5);
   }
+  html += `</section><section class="predsec"><h2>Likely fine <span class="n">${by.fine.length}</span></h2><p class="small">Low risk at a typical serving.</p>`;
+  html += by.fine.length ? listBlock('fine', by.fine, 6) : '<p class="none">None at the moment.</p>';
+  html += '</section>';
   const unsure = by.unsure;
   if (unsure.length) {
     const gaps = [...new Set(unsure.flatMap(x => x.untested || []))];
