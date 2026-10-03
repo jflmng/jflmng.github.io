@@ -3,6 +3,8 @@ layout: single
 title: People
 permalink: /people/
 classes: wide
+redirect_from:
+  - /group/
 ---
 
 ## Group lead
