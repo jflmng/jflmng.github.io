@@ -48,7 +48,7 @@ machine-learning systems that decide what support to offer, and when, to help pe
 manage long-term conditions.
 
 ### Project: Holly Health Prevent App
-**Innovate UK** · with [Holly Health](https://hollyhealth.io/) and Modality Partnership
+**Innovate UK** · in partnership with [Holly Health](https://hollyhealth.io/)
 
 A Just-in-Time Adaptive Intervention (JITAI) system that delivers personalised
 coaching to people living with multiple chronic conditions, around 30% of UK adults,
