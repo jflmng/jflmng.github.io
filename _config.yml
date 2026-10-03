@@ -18,7 +18,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Intelligent Control Group  # TODO: confirm final group name
+title: Intelligent Control Group
 email: j.fleming@lboro.ac.uk
 description: >- # this means to ignore newlines until "baseurl:"
   The Intelligent Control Group at Loughborough University develops control and
