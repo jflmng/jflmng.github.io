@@ -1,39 +1,60 @@
 ---
 layout: single
-author_profile: true
 title: Research
 permalink: /research/
+toc: true
+toc_label: "On this page"
 ---
 
-## Current Projects
+Our group works where control theory meets machine learning. We design controllers
+that make good decisions in real time, respect safety constraints, and cope with
+uncertainty, and we test them on vehicles, robots and energy systems.
 
-### Learning of Safety-Critical Model Predictive Controllers for Autonomous Systems
-**Funded by EPSRC (New Investigator Award)** | [Project Details](https://gtr.ukri.org/projects?ref=EP%2FX015459%2F1)
+<!-- TODO: add one image or short video per theme (e.g. motorcycle rig, vehicle trials, plots). -->
 
-Mobile robots and autonomous vehicles rely heavily on motion control techniques. Model Predictive Control (MPC) is a powerful framework for this, offering strong safety assurances but requiring significant expert knowledge to implement. Conversely, AI techniques like reinforcement learning can learn control policies automatically but lack safety guarantees.
+## Safe predictive control
 
-This project aims to bridge this gap by developing AI methods to **automatically design MPC for safe motion control** of autonomous systems.
-*   **Goal:** Enable rapid design of safe controllers, reducing development time/cost while improving reliability.
-*   **Approach:** Differentiating MPC controllers to train them within reinforcement learning frameworks.
-*   **Applications:** Autonomous vehicles and stability-assisted motorcycles (in partnership with Dynamotion and the University of Padova).
+Many important problems in industry involve optimising performance while never
+violating safety-critical constraints. Model predictive control (MPC) does this by
+predicting and optimising a system's future behaviour. To handle uncertainty without
+prohibitive computation, we develop methods that reason about **sets** of predicted
+states, giving robust controllers with formal guarantees.
 
-### Holly Health: AI-Driven Chronic Condition Management
-**Funded by Innovate UK**
+**Applications:**
+*   **Driver assistance:** cutting vehicle energy use by anticipating traffic.
+*   **Connected vehicles:** control of heterogeneous vehicle platoons.
+*   **Motorcycles:** gyroscopic stabilisation for safer riding.
+*   **Offshore wind:** control of large floating wind turbines.
 
-In partnership with [Holly Health](https://hollyhealth.io/) and Modality Partnership, we are developing the **Prevent App**, an innovative digital health tool to help individuals manage multiple chronic conditions.
-*   **Technology:** A Just-in-Time Adaptive Intervention (JITAI) machine learning system that delivers personalized coaching interventions.
-*   **Impact:** Targeting the 30% of UK adults with multimorbidity to improve health outcomes and reduce NHS burden.
-*   **Role:** Combining behavioural science with machine learning to tailor support for evolving patient needs.
+## Learning-enabled control
 
----
+Reinforcement learning can learn control policies automatically but offers no safety
+guarantees. MPC offers guarantees but takes expert effort to design. We bridge the
+gap by making MPC **differentiable**, so safe controllers can be trained inside
+reinforcement-learning frameworks.
 
-## Research Themes
+### Project: Learning of Safety-Critical MPC for Autonomous Systems
+**EPSRC New Investigator Award** · [Project details](https://gtr.ukri.org/projects?ref=EP%2FX015459%2F1)
 
-### Optimal control of constrained and uncertain systems
-Many important control problems in industry involve optimising a performance measure while satisfying safety-critical constraints. Real-world systems must handle uncertainty. We develop advanced modelling and control techniques to improve energy economy and safety in automotive and renewable sectors.
+This project develops AI methods that design MPC automatically, for safe motion
+control of autonomous vehicles and stability-assisted motorcycles, in partnership
+with Dynamotion and the University of Padova. The aim is to cut controller
+development time and cost while improving reliability.
 
-### Model predictive control and its applications
-MPC predicts and optimises future system states. To handle uncertainty without computationally prohibitive complexity, we have developed approaches that consider **sets** of predicted states. This leads to robust controllers with applications in:
-*   **Driver Assistance:** Reducing energy usage by predicting traffic conditions.
-*   **Intelligent Vehicles:** Heterogeneous vehicle platoons.
-*   **Motorcycles:** Gyroscopic stabilisation systems for enhanced stability.
+## AI for health and behaviour
+
+The same ideas of feedback, prediction and personalisation apply to people. We build
+machine-learning systems that decide what support to offer, and when, to help people
+manage long-term conditions.
+
+### Project: Holly Health Prevent App
+**Innovate UK** · with [Holly Health](https://hollyhealth.io/) and Modality Partnership
+
+A Just-in-Time Adaptive Intervention (JITAI) system that delivers personalised
+coaching to people living with multiple chronic conditions, around 30% of UK adults,
+aiming to improve health outcomes and reduce pressure on the NHS.
+
+## Work with us
+
+We welcome collaboration with industry and other research groups.
+[Get in touch](/contact/){: .btn .btn--primary} [Join the group](/join/){: .btn .btn--inverse}

@@ -1,0 +1,43 @@
+---
+# Theme stylesheet plus group-site additions
+---
+
+@charset "utf-8";
+
+@import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}";
+@import "minimal-mistakes";
+
+/* People grid */
+.people-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 1.5em;
+  margin: 1em 0 2.5em;
+}
+.person-card { text-align: center; }
+.person-card__photo {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 0.5em;
+}
+.person-card__name { font-size: 1em; margin: 0.2em 0; }
+.person-card__role { font-size: 0.8em; font-weight: bold; margin: 0; }
+.person-card__topic { font-size: 0.75em; color: $muted-text-color; margin: 0.3em 0; }
+.person-card__links { font-size: 0.9em; margin: 0.3em 0 0; }
+.person-card__links a { margin: 0 0.3em; }
+
+/* Funders and partners strip */
+.partners {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1em 2.5em;
+  margin: 1em 0 2em;
+  font-weight: bold;
+  color: $muted-text-color;
+}
+.partners img { max-height: 50px; }
+.partners a { color: inherit; text-decoration: none; }

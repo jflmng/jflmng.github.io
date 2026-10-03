@@ -1,0 +1,44 @@
+# Group members. Edit here and the People page updates automatically.
+# Fields: name, role, topic, photo (e.g. /assets/images/people/jane-doe.jpg),
+#         url (personal/profile page), email, scholar, linkedin, github.
+# Photos: square crop, ideally 400x400px, put in assets/images/people/.
+# TODO: replace placeholders with real names, topics and photos.
+
+lead:
+  - name: "Dr James Fleming"
+    role: "Group Lead, Senior Lecturer"
+    topic: "Model predictive control, learning-based control, autonomous systems"
+    url: /people/james-fleming/
+    email: j.fleming@lboro.ac.uk
+    scholar: "https://scholar.google.com/citations?user=qXhzsAMAAAAJ"
+
+researchers:
+  - name: "Postdoc Name"
+    role: "Postdoctoral Research Associate"
+    topic: "Research topic / project"
+  - name: "Research Fellow Name"
+    role: "Research Fellow"
+    topic: "Research topic / project"
+
+students:
+  - name: "Student 1"
+    role: "PhD Student"
+    topic: "Thesis topic"
+  - name: "Student 2"
+    role: "PhD Student"
+    topic: "Thesis topic"
+  - name: "Student 3"
+    role: "PhD Student"
+    topic: "Thesis topic"
+  - name: "Student 4"
+    role: "PhD Student"
+    topic: "Thesis topic"
+  - name: "Student 5"
+    role: "PhD Student"
+    topic: "Thesis topic"
+  - name: "Student 6"
+    role: "PhD Student"
+    topic: "Thesis topic"
+
+# Former members: name, role while here, years, now (current position)
+alumni: []
