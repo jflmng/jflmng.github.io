@@ -1,11 +1,11 @@
 ---
 layout: single
-author_profile: true
 title: Publications
 permalink: /publications/
+classes: wide
 ---
 
-Recent publications are listed below. A full list may be found on 
-[Google scholar](https://scholar.google.com/citations?user=qXhzsAMAAAAJ).
+Recent publications from the group are listed below. For a complete list, see
+[Google Scholar](https://scholar.google.com/citations?user=qXhzsAMAAAAJ).
 
 {% include publications limit=20 link=true %}

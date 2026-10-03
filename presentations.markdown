@@ -1,7 +1,7 @@
 ---
 layout: single
 author_profile: true
-title: Presentations
+title: Talks by James Fleming
 permalink: /presentations/
 ---
 
@@ -29,5 +29,5 @@ permalink: /presentations/
 <div class="notice--info">
   <h4>CDC Presentation on LPV MPC</h4>
   <p><strong>December 2024</strong></p>
-  <a href="/download/Robust_tube_MPC_for_LPV_A__updated_ (1).pdf" class="btn btn--danger"><i class="fas fa-file-pdf"></i> PDF</a>
+  <a href="/download/CDC2024_Robust_tube_MPC_LPV_JF.pdf" class="btn btn--danger"><i class="fas fa-file-pdf"></i> PDF</a>
 </div>

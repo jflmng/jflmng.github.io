@@ -18,30 +18,17 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: James Fleming
+title: Intelligent Control Group  # TODO: confirm final group name
 email: j.fleming@lboro.ac.uk
 description: >- # this means to ignore newlines until "baseurl:"
-  James Fleming's webpages.
+  The Intelligent Control Group at Loughborough University develops control and
+  learning methods that let autonomous systems act optimally and safely under uncertainty.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "jflmng.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://jflmng.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
 github_username:  jflmng
 minimal_mistakes_skin: default
 search: true
-
-# Navigation
-navigation:
-  main:
-    - title: "About"
-      url: /about/
-    - title: "Research"
-      url: /research/
-    - title: "Publications"
-      url: /publications/
-    - title: "Presentations"
-      url: /presentations/
-    - title: "Group"
-      url: /group/
 
 # Author / Sidebar
 author:
@@ -74,6 +61,20 @@ plugins:
   - jekyll-remote-theme
   - jekyll-include-cache
   - jekyll-feed
+  - jekyll-redirect-from
+
+# Footer links (shown on every page)
+footer:
+  links:
+    - label: "Email"
+      icon: "fas fa-fw fa-envelope-square"
+      url: "mailto:j.fleming@lboro.ac.uk"
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/jflmng"
+    - label: "Loughborough University"
+      icon: "fas fa-fw fa-university"
+      url: "https://www.lboro.ac.uk/schools/meme/"
 
 # Minima skin to use (Disabled)
 # minima:

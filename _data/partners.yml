@@ -1,0 +1,13 @@
+# Funders and partners shown on the home page.
+# Add `logo: /assets/images/partners/<file>.png` to show a logo instead of the name.
+- name: "EPSRC"
+  url: "https://www.ukri.org/councils/epsrc/"
+- name: "Innovate UK"
+  url: "https://www.ukri.org/councils/innovate-uk/"
+- name: "Holly Health"
+  url: "https://hollyhealth.io/"
+- name: "Modality Partnership"
+  url: "https://www.modalitypartnership.nhs.uk/"
+- name: "Dynamotion"
+- name: "University of Padova"
+  url: "https://www.unipd.it/en/"
